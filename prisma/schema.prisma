@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id          String   @id @default(cuid())
+  username    String
+  price       Float
+  type        String
+  hasCape     Boolean  @default(false)
+  capeType    String   @default("")
+  nameChanges Int      @default(0)
+  description String   @default("")
+  discord     String
+  createdAt   DateTime @default(now())
+}
