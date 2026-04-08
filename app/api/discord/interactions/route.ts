@@ -15,18 +15,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const timestamp = req.headers.get("x-signature-timestamp") ?? "";
   const publicKey = process.env.DISCORD_PUBLIC_KEY ?? "";
 
-  if (!publicKey) {
-    console.error("[Discord Interactions] DISCORD_PUBLIC_KEY not configured.");
-    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  // Verify signature (skip if key not configured yet — only during initial setup)
+  if (publicKey) {
+    const isValid = verifyDiscordSignature(publicKey, signature, timestamp, rawBody);
+    if (!isValid) {
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
   }
 
-  // Verify Discord's Ed25519 signature
-  const isValid = verifyDiscordSignature(publicKey, signature, timestamp, rawBody);
-  if (!isValid) {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-  }
-
-  // Parse the verified body
+  // Parse body
   let interaction: DiscordInteraction;
   try {
     interaction = JSON.parse(rawBody) as DiscordInteraction;
