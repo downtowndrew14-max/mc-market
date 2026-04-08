@@ -7,21 +7,29 @@ import { Account, ACCOUNT_TYPES } from "@/lib/db";
 const SORT_OPTIONS = [
   { value: "newest", label: "Date: Recent" },
   { value: "oldest", label: "Date: Oldest" },
-  { value: "bin-asc", label: "BIN: Low to High" },
-  { value: "bin-desc", label: "BIN: High to Low" },
+  { value: "bin-asc", label: "Price: Low → High" },
+  { value: "bin-desc", label: "Price: High → Low" },
 ];
 
-function FilterSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
+const PRICE_TYPES = [
+  { value: "both", label: "Both" },
+  { value: "co", label: "Current Offers" },
+  { value: "bin", label: "BINs Only" },
+];
+
+function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(true);
   return (
-    <div className="border-b border-gray-100 pb-4">
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between py-2">
-        <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">{title}</span>
-        <svg className={`w-3 h-3 text-gray-400 transition-transform ${open ? "" : "-rotate-90"}`} viewBox="0 0 10 6" fill="none">
-          <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
-      </button>
-      {open && <div className="mt-2">{children}</div>}
+    <div className="filter-section">
+      <div className="filter-heading-row" onClick={() => setOpen(!open)}>
+        <span className="filter-heading">{title}</span>
+        <span className={`filter-chevron${open ? "" : " collapsed"}`}>
+          <svg width="12" height="12" viewBox="0 0 12 8" fill="none">
+            <path d="M1 1.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </span>
+      </div>
+      <div className={`filter-content${open ? "" : " collapsed"}`}>{children}</div>
     </div>
   );
 }
@@ -34,30 +42,30 @@ export default function BrowsePage() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [priceType, setPriceType] = useState("both");
-  const [maxNameChanges, setMaxNameChanges] = useState(15);
-  const [minUsernameLen, setMinUsernameLen] = useState("");
-  const [maxUsernameLen, setMaxUsernameLen] = useState("");
+  const [maxNC, setMaxNC] = useState(15);
+  const [minLen, setMinLen] = useState("");
+  const [maxLen, setMaxLen] = useState("");
   const [sort, setSort] = useState("newest");
 
   const toggleType = (t: string) =>
-    setSelectedTypes((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]);
+    setSelectedTypes((p) => p.includes(t) ? p.filter((x) => x !== t) : [...p, t]);
 
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    selectedTypes.forEach((t) => params.append("type", t));
-    if (minPrice) params.set("minPrice", minPrice);
-    if (maxPrice) params.set("maxPrice", maxPrice);
-    if (priceType !== "both") params.set("priceType", priceType);
-    if (maxNameChanges < 15) params.set("maxNameChanges", String(maxNameChanges));
-    if (minUsernameLen) params.set("minUsernameLen", minUsernameLen);
-    if (maxUsernameLen) params.set("maxUsernameLen", maxUsernameLen);
-    params.set("sort", sort);
-    const res = await fetch(`/api/accounts?${params}`);
+    const p = new URLSearchParams();
+    if (search) p.set("search", search);
+    selectedTypes.forEach((t) => p.append("type", t));
+    if (minPrice) p.set("minPrice", minPrice);
+    if (maxPrice) p.set("maxPrice", maxPrice);
+    if (priceType !== "both") p.set("priceType", priceType);
+    if (maxNC < 15) p.set("maxNameChanges", String(maxNC));
+    if (minLen) p.set("minUsernameLen", minLen);
+    if (maxLen) p.set("maxUsernameLen", maxLen);
+    p.set("sort", sort);
+    const res = await fetch(`/api/accounts?${p}`);
     setAccounts(await res.json());
     setLoading(false);
-  }, [search, selectedTypes, minPrice, maxPrice, priceType, maxNameChanges, minUsernameLen, maxUsernameLen, sort]);
+  }, [search, selectedTypes, minPrice, maxPrice, priceType, maxNC, minLen, maxLen, sort]);
 
   useEffect(() => {
     const t = setTimeout(fetchAccounts, 200);
@@ -65,108 +73,85 @@ export default function BrowsePage() {
   }, [fetchAccounts]);
 
   return (
-    <div className="flex gap-6 min-h-[80vh]">
+    <div className="page-container">
       {/* Sidebar */}
-      <aside className="w-56 shrink-0 hidden md:block">
-        <div className="bg-white rounded-2xl p-4 flex flex-col gap-3 sticky top-20 border border-gray-100">
+      <aside className="sidebar">
+        <FilterSection title="Sort By">
+          <select className="glass-select" value={sort} onChange={(e) => setSort(e.target.value)}>
+            {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </FilterSection>
 
-          <FilterSection title="Sort By">
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="w-full border border-gray-200 text-sm text-gray-700 rounded-lg px-2.5 py-2 focus:outline-none bg-white cursor-pointer"
-            >
-              {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </FilterSection>
+        <FilterSection title="Price Range">
+          <div className="filter-row">
+            <input className="glass-input" type="number" placeholder="Min $" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+            <span className="filter-separator">-</span>
+            <input className="glass-input" type="number" placeholder="Max $" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+          </div>
+        </FilterSection>
 
-          <FilterSection title="Price Range">
-            <div className="flex items-center gap-1.5">
-              <input type="number" placeholder="Min $" value={minPrice} onChange={(e) => setMinPrice(e.target.value)}
-                className="w-full border border-gray-200 text-sm rounded-lg px-2.5 py-1.5 focus:outline-none bg-white placeholder-gray-400" />
-              <span className="text-gray-300">-</span>
-              <input type="number" placeholder="Max $" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-full border border-gray-200 text-sm rounded-lg px-2.5 py-1.5 focus:outline-none bg-white placeholder-gray-400" />
+        <FilterSection title="Price Type">
+          <select className="glass-select" value={priceType} onChange={(e) => setPriceType(e.target.value)}>
+            {PRICE_TYPES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </FilterSection>
+
+        <FilterSection title="Account Type">
+          <div className="checkbox-group">
+            {ACCOUNT_TYPES.map((t) => (
+              <label key={t} className="checkbox-label">
+                <input type="checkbox" checked={selectedTypes.includes(t)} onChange={() => toggleType(t)} />
+                {t}
+              </label>
+            ))}
+          </div>
+        </FilterSection>
+
+        <FilterSection title="Name Changes">
+          <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "var(--foreground-muted)", fontSize: ".9rem", fontWeight: 600 }}>
+                Max: {maxNC >= 15 ? "15+" : maxNC}
+              </span>
             </div>
-          </FilterSection>
-
-          <FilterSection title="Price Type">
-            <select value={priceType} onChange={(e) => setPriceType(e.target.value)}
-              className="w-full border border-gray-200 text-sm text-gray-700 rounded-lg px-2.5 py-2 focus:outline-none bg-white cursor-pointer">
-              <option value="both">Both</option>
-              <option value="bin">BIN Only</option>
-              <option value="co">C/O Only</option>
-            </select>
-          </FilterSection>
-
-          <FilterSection title="Account Type">
-            <div className="flex flex-col gap-1.5">
-              {ACCOUNT_TYPES.map((t) => (
-                <label key={t} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedTypes.includes(t)}
-                    onChange={() => toggleType(t)}
-                    className="w-3.5 h-3.5 accent-gray-900 cursor-pointer"
-                  />
-                  <span className="text-sm text-gray-600">{t}</span>
-                </label>
-              ))}
+            <input type="range" className="range-input" min={0} max={15} value={maxNC} onChange={(e) => setMaxNC(parseInt(e.target.value))} />
+            <div className="range-labels">
+              <span>0</span>
+              <span>15+</span>
             </div>
-          </FilterSection>
+          </div>
+        </FilterSection>
 
-          <FilterSection title="Name Changes">
-            <div className="px-1">
-              <input
-                type="range" min={0} max={15} value={maxNameChanges}
-                onChange={(e) => setMaxNameChanges(parseInt(e.target.value))}
-                className="w-full"
-              />
-              <div className="flex justify-between text-[11px] text-gray-400 mt-1">
-                <span>0</span>
-                <span className="text-gray-600 font-medium">Max: {maxNameChanges >= 15 ? "15+" : maxNameChanges}</span>
-                <span>15+</span>
-              </div>
-            </div>
-          </FilterSection>
-
-          <FilterSection title="Username Length" defaultOpen={false}>
-            <div className="flex items-center gap-1.5">
-              <input type="number" placeholder="Min" value={minUsernameLen} onChange={(e) => setMinUsernameLen(e.target.value)}
-                className="w-full border border-gray-200 text-sm rounded-lg px-2.5 py-1.5 focus:outline-none bg-white placeholder-gray-400" />
-              <span className="text-gray-300">-</span>
-              <input type="number" placeholder="Max" value={maxUsernameLen} onChange={(e) => setMaxUsernameLen(e.target.value)}
-                className="w-full border border-gray-200 text-sm rounded-lg px-2.5 py-1.5 focus:outline-none bg-white placeholder-gray-400" />
-            </div>
-          </FilterSection>
-
-        </div>
+        <FilterSection title="Username Length">
+          <div className="filter-row">
+            <input className="glass-input" type="number" placeholder="Min" value={minLen} onChange={(e) => setMinLen(e.target.value)} />
+            <span className="filter-separator">-</span>
+            <input className="glass-input" type="number" placeholder="Max" value={maxLen} onChange={(e) => setMaxLen(e.target.value)} />
+          </div>
+        </FilterSection>
       </aside>
 
       {/* Main */}
-      <div className="flex-1 min-w-0">
-        <input
-          type="text" placeholder="Search by username..."
-          value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 mb-5 focus:outline-none focus:border-gray-300 placeholder-gray-400 shadow-sm"
-        />
-
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold text-gray-900">Minecraft Accounts</h1>
-          <span className="text-sm text-gray-400">
+      <div className="grid-container">
+        <div>
+          <input
+            className="search-bar"
+            type="text"
+            placeholder="Search by username..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="grid-header">
+          <h2>Minecraft Accounts</h2>
+          <span className="grid-count">
             {loading ? "Loading..." : `${accounts.length} account${accounts.length !== 1 ? "s" : ""} found`}
           </span>
         </div>
-
-        <div className="h-px bg-gray-200 mb-5" />
-
         {!loading && accounts.length === 0 ? (
-          <div className="text-center py-24 text-gray-400">
-            <p className="text-4xl font-bold mb-2">0</p>
-            <p className="text-sm">No accounts match your filters</p>
-          </div>
+          <div className="grid-empty">No accounts found</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="accounts-grid">
             {accounts.map((a) => <AccountCard key={a.id} account={a} />)}
           </div>
         )}

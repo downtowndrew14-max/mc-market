@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Account, getCapeList } from "@/lib/db";
 
 function ncLabel(n: number) {
@@ -9,62 +10,68 @@ function ncLabel(n: number) {
   return `${n} NAME CHANGE${n !== 1 ? "S" : ""}`;
 }
 
+// Map cape names to short abbreviations for the pixel icons
+function CapeIcon({ name }: { name: string }) {
+  const abbr = name.replace(/[^A-Z0-9]/gi, "").slice(0, 2).toUpperCase();
+  const colors: Record<string, string> = {
+    "Migrator": "#4f46e5", "Vanilla": "#10b981", "MineCon 2011": "#f59e0b",
+    "MineCon 2012": "#ef4444", "MineCon 2013": "#8b5cf6", "MineCon 2015": "#06b6d4",
+    "MineCon 2016": "#f97316", "Founder's": "#eab308", "Mojang Office": "#dc2626",
+    "Purple Heart": "#7c3aed", "Cherry Blossom": "#ec4899", "Common": "#6b7280",
+    "Copper": "#b45309", "Home": "#2563eb", "Menace": "#991b1b",
+    "Pan": "#d97706", "Translator": "#0891b2", "Yearn": "#7c2d12",
+    "Zombie Horse": "#4d7c0f", "15th Anniversary": "#b45309",
+    "Follower's": "#6366f1", "MCC 15th Year": "#db2777",
+    "Realms Mapmaker": "#0369a1", "Minecraft Experience": "#16a34a",
+  };
+  const bg = colors[name] ?? "#6b7280";
+
+  return (
+    <div className="cape-icon" style={{ background: bg, width: 32, height: 32 }} title={name}>
+      <span style={{ color: "#fff", fontSize: "9px", fontWeight: 900, fontFamily: "monospace" }}>{abbr}</span>
+    </div>
+  );
+}
+
 export default function AccountCard({ account }: { account: Account }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
   const capes = getCapeList(account.capes);
 
   return (
-    <Link href={`/account/${account.id}`}>
-      <div className="bg-white rounded-2xl overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-200 border border-gray-100">
-        {/* Character render */}
-        <div className="relative bg-gray-50 flex justify-center items-end overflow-hidden" style={{ height: 220 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`https://mc-heads.net/body/${account.username}/200`}
-            alt={account.username}
-            className="h-full object-contain"
-            loading="lazy"
-          />
-          {/* Cape thumbnails bottom-left */}
-          {capes.length > 0 && (
-            <div className="absolute bottom-2 left-2 flex gap-1">
-              {capes.slice(0, 3).map((cape) => (
-                <div
-                  key={cape}
-                  title={cape}
-                  className="w-8 h-8 bg-white rounded-md border border-gray-200 flex items-center justify-center overflow-hidden shadow-sm"
-                >
-                  <span className="text-[8px] text-gray-500 font-bold text-center leading-tight px-0.5">
-                    {cape.slice(0, 3).toUpperCase()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Info */}
-        <div className="p-4">
-          <div className="flex items-start justify-between mb-1">
-            <h3 className="font-bold text-gray-900 text-lg leading-tight">{account.username}</h3>
-            <span className="text-xs text-gray-400 font-medium mt-1 shrink-0 ml-2">{ncLabel(account.nameChanges)}</span>
+    <Link href={`/account/${account.id}`} className="account-card">
+      {/* Image */}
+      <div className="card-image-container">
+        {!imgLoaded && <div className="card-spinner" />}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://mc-heads.net/body/${account.username}/200`}
+          alt={account.username}
+          onLoad={() => setImgLoaded(true)}
+          style={{ height: "100%", objectFit: "contain", display: imgLoaded ? "block" : "none" }}
+        />
+        {capes.length > 0 && (
+          <div className="card-capes-overlay">
+            {capes.slice(0, 4).map((c) => <CapeIcon key={c} name={c} />)}
           </div>
+        )}
+      </div>
 
-          {account.description && (
-            <p className="text-sm text-gray-500 line-clamp-2 mb-3 leading-snug">{account.description}</p>
-          )}
-
-          <div className="flex items-center gap-4 mt-2">
-            <div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">C/O</p>
-              <p className="text-sm font-semibold text-gray-700">
-                {account.currentOffer > 0 ? `$${account.currentOffer.toFixed(2)}` : "-"}
-              </p>
+      {/* Content */}
+      <div className="card-content">
+        <div className="card-title-row">
+          <h3 className="card-username">{account.username}</h3>
+          <span className="card-nc">{ncLabel(account.nameChanges)}</span>
+        </div>
+        <p className="card-description">{account.description || " "}</p>
+        <div className="card-meta">
+          <div className="card-prices">
+            <div className="price-item">
+              <span className="price-label">C/O</span>
+              <span className="price-value">{account.currentOffer > 0 ? `$${account.currentOffer.toFixed(2)}` : "-"}</span>
             </div>
-            <div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">BIN</p>
-              <p className="text-sm font-semibold text-gray-900">
-                {account.price > 0 ? `$${account.price.toFixed(2)}` : "-"}
-              </p>
+            <div className="price-item">
+              <span className="price-label">BIN</span>
+              <span className="price-value">{account.price > 0 ? `$${account.price.toFixed(2)}` : "-"}</span>
             </div>
           </div>
         </div>

@@ -66,144 +66,220 @@ export default function ListAccountPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="bg-white rounded-2xl border border-gray-100 p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">List Your Account</h1>
-        <p className="text-sm text-gray-400 mb-8">Fill out the form below to submit your account for listing approval.</p>
+    <div style={{ paddingTop: "2rem", paddingBottom: "2rem", maxWidth: 760, margin: "0 auto" }}>
+      <h1 style={{ fontSize: "2.5rem", fontWeight: 900, letterSpacing: "-.04em", color: "var(--foreground)", marginBottom: ".25rem" }}>List Your Account</h1>
+      <p style={{ fontSize: ".9rem", color: "var(--foreground-subtle)", marginBottom: "2rem" }}>Fill out the form below to submit your account for listing.</p>
 
-        <form onSubmit={submit} className="flex flex-col gap-7">
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
-              Account Username <span className="text-red-500">*</span>
-            </label>
-            <input type="text" required value={form.username} onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
-              placeholder="Enter the account username (e.g. Reprising, R****se)"
-              className="w-full border border-gray-200 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:border-gray-400 bg-white placeholder-gray-400" />
-          </div>
+      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
-          {/* Account Type */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">
-              Account Type <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {ACCOUNT_TYPES.map((t) => (
-                <label key={t} className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-100 transition-colors">
-                  <input type="checkbox" checked={form.types.includes(t)} onChange={() => toggleType(t)} className="w-3.5 h-3.5 accent-gray-900" />
-                  <span className="text-sm text-gray-700">{t}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+        {/* Username */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: ".75rem" }}>
+          <label style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700 }}>
+            Account Username <span style={{ color: "#ef4444" }}>*</span>
+          </label>
+          <input
+            className="glass-input"
+            type="text"
+            required
+            value={form.username}
+            onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
+            placeholder="e.g. Reprising, R****se"
+            style={{ width: "100%" }}
+          />
+        </div>
 
-          {/* Name Changes */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">
-              Number of Name Changes: {form.nameChanges === 0 ? "Prename" : form.nameChanges >= 15 ? "15+" : form.nameChanges} <span className="text-red-500">*</span>
-            </label>
-            <input type="range" min={0} max={15} value={form.nameChanges}
-              onChange={(e) => setForm((p) => ({ ...p, nameChanges: parseInt(e.target.value) }))}
-              className="w-full" />
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>Prename (0)</span>
-              <span>15+</span>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
-              Description <span className="text-red-500">*</span>
-            </label>
-            <textarea required value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-              rows={4} placeholder="Include OGO, stats, bans, cosmetics, etc."
-              className="w-full border border-gray-200 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:border-gray-400 bg-white placeholder-gray-400 resize-none" />
-          </div>
-
-          {/* BIN + C/O */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
-                BIN (Buy It Now) <span className="text-red-500">*</span>
+        {/* Account Type */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: ".75rem" }}>
+          <label style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700 }}>
+            Account Type <span style={{ color: "#ef4444" }}>*</span>
+          </label>
+          <div className="checkbox-group" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: ".5rem" }}>
+            {ACCOUNT_TYPES.map((t) => (
+              <label key={t} className="checkbox-label">
+                <input type="checkbox" checked={form.types.includes(t)} onChange={() => toggleType(t)} />
+                {t}
               </label>
-              <input type="number" min="0" step="0.01" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))}
-                placeholder="Put 0 if you don't have a set BIN"
-                className="w-full border border-gray-200 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:border-gray-400 bg-white placeholder-gray-400" />
+            ))}
+          </div>
+        </div>
+
+        {/* Name Changes */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: ".75rem" }}>
+          <label style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700 }}>
+            Name Changes <span style={{ color: "#ef4444" }}>*</span>
+          </label>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: ".95rem", fontWeight: 700, color: "var(--foreground)" }}>
+              {form.nameChanges === 0 ? "Prename (0)" : form.nameChanges >= 15 ? "15+" : form.nameChanges}
+            </span>
+          </div>
+          <input
+            type="range"
+            className="range-input"
+            min={0}
+            max={15}
+            value={form.nameChanges}
+            onChange={(e) => setForm((p) => ({ ...p, nameChanges: parseInt(e.target.value) }))}
+          />
+          <div className="range-labels">
+            <span>Prename (0)</span>
+            <span>15+</span>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: ".75rem" }}>
+          <label style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700 }}>
+            Description <span style={{ color: "#ef4444" }}>*</span>
+          </label>
+          <textarea
+            required
+            value={form.description}
+            onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+            rows={4}
+            placeholder="Include OGO, stats, bans, cosmetics, etc."
+            style={{
+              width: "100%",
+              background: "var(--glass-bg)",
+              border: "1px solid var(--glass-border)",
+              borderRadius: 12,
+              padding: ".75rem 1rem",
+              fontSize: ".9rem",
+              color: "var(--foreground)",
+              resize: "vertical",
+              outline: "none",
+              fontFamily: "inherit",
+              lineHeight: 1.6,
+            }}
+          />
+        </div>
+
+        {/* BIN + C/O */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
+            <label style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700 }}>
+              BIN (Buy It Now) <span style={{ color: "#ef4444" }}>*</span>
+            </label>
+            <input
+              className="glass-input"
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.price}
+              onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))}
+              placeholder="0 if no BIN"
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
+            <label style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700 }}>
+              C/O (Current Offer) <span style={{ color: "#ef4444" }}>*</span>
+            </label>
+            <input
+              className="glass-input"
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.currentOffer}
+              onChange={(e) => setForm((p) => ({ ...p, currentOffer: e.target.value }))}
+              placeholder="0 if no offer"
+            />
+          </div>
+        </div>
+
+        {/* Capes */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: ".75rem" }}>
+          <label style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700 }}>Capes (Optional)</label>
+          <div className="checkbox-group" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: ".5rem" }}>
+            {ALL_CAPES.map((c) => (
+              <label key={c} className="checkbox-label">
+                <input type="checkbox" checked={form.capes.includes(c)} onChange={() => toggleCape(c)} />
+                {c}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Contact */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div>
+            <p style={{ fontSize: ".7rem", color: "var(--foreground-subtle)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 700, marginBottom: ".25rem" }}>Contact Information</p>
+            <p style={{ fontSize: ".8rem", color: "var(--foreground-subtle)" }}>Provide at least one contact method.</p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
+            <div>
+              <label style={{ display: "block", fontSize: ".75rem", color: "var(--foreground-muted)", fontWeight: 600, marginBottom: ".4rem" }}>OGUser Profile Link</label>
+              <input
+                className="glass-input"
+                type="text"
+                value={form.oguser}
+                onChange={(e) => setForm((p) => ({ ...p, oguser: e.target.value }))}
+                placeholder="https://oguser.com/..."
+                style={{ width: "100%" }}
+              />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
-                C/O (Current Offer) <span className="text-red-500">*</span>
-              </label>
-              <input type="number" min="0" step="0.01" value={form.currentOffer} onChange={(e) => setForm((p) => ({ ...p, currentOffer: e.target.value }))}
-                placeholder="Put 0 if no current offer"
-                className="w-full border border-gray-200 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:border-gray-400 bg-white placeholder-gray-400" />
+              <label style={{ display: "block", fontSize: ".75rem", color: "var(--foreground-muted)", fontWeight: 600, marginBottom: ".4rem" }}>Discord User ID</label>
+              <input
+                className="glass-input"
+                type="text"
+                value={form.discord}
+                onChange={(e) => setForm((p) => ({ ...p, discord: e.target.value }))}
+                placeholder="Discord user ID (numbers)"
+                style={{ width: "100%" }}
+              />
+            </div>
+            <div>
+              <label style={{ display: "block", fontSize: ".75rem", color: "var(--foreground-muted)", fontWeight: 600, marginBottom: ".4rem" }}>Telegram Username</label>
+              <input
+                className="glass-input"
+                type="text"
+                value={form.telegram}
+                onChange={(e) => setForm((p) => ({ ...p, telegram: e.target.value }))}
+                placeholder="username (without @)"
+                style={{ width: "100%" }}
+              />
             </div>
           </div>
+        </div>
 
-          {/* Capes */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">Capes (Optional)</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {ALL_CAPES.map((c) => (
-                <label key={c} className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-50 transition-colors">
-                  <input type="checkbox" checked={form.capes.includes(c)} onChange={() => toggleCape(c)} className="w-3.5 h-3.5 accent-gray-900 shrink-0" />
-                  <span className="text-sm text-gray-700">{c}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+        {/* Agreements */}
+        <div className="glass" style={{ borderRadius: "var(--radius)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: ".75rem" }}>
+          <label className="checkbox-label" style={{ padding: ".75rem 1rem", borderRadius: 12, border: "1px solid var(--glass-border)", cursor: "pointer" }}>
+            <input type="checkbox" checked={form.ownerConfirm} onChange={(e) => setForm((p) => ({ ...p, ownerConfirm: e.target.checked }))} />
+            <span>I am the owner of this account. <span style={{ color: "#ef4444" }}>*</span></span>
+          </label>
+          <label className="checkbox-label" style={{ padding: ".75rem 1rem", borderRadius: 12, border: "1px solid var(--glass-border)", cursor: "pointer" }}>
+            <input type="checkbox" checked={form.feeConfirm} onChange={(e) => setForm((p) => ({ ...p, feeConfirm: e.target.checked }))} />
+            <span>I agree with the 4% proxy fee if the site finds a buyer. <span style={{ color: "#ef4444" }}>*</span></span>
+          </label>
+        </div>
 
-          {/* Contact */}
-          <div>
-            <h2 className="text-base font-bold text-gray-900 mb-0.5">Contact Information</h2>
-            <p className="text-xs text-gray-400 mb-3">Provide at least one contact method. Leave blank if you don't have that social.</p>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">OGUser Profile Link</label>
-                <input type="text" value={form.oguser} onChange={(e) => setForm((p) => ({ ...p, oguser: e.target.value }))}
-                  placeholder="https://oguser.com/..."
-                  className="w-full border border-gray-200 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:border-gray-400 bg-white placeholder-gray-400" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Discord Username</label>
-                <input type="text" value={form.discord} onChange={(e) => setForm((p) => ({ ...p, discord: e.target.value }))}
-                  placeholder="username"
-                  className="w-full border border-gray-200 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:border-gray-400 bg-white placeholder-gray-400" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Telegram</label>
-                <input type="text" value={form.telegram} onChange={(e) => setForm((p) => ({ ...p, telegram: e.target.value }))}
-                  placeholder="username"
-                  className="w-full border border-gray-200 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:border-gray-400 bg-white placeholder-gray-400" />
-              </div>
-            </div>
-          </div>
+        {error && (
+          <p style={{ fontSize: ".85rem", color: "#ef4444", background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 12, padding: ".75rem 1rem" }}>{error}</p>
+        )}
 
-          {/* Agreements */}
-          <div className="flex flex-col gap-2">
-            <label className="flex items-start gap-3 border border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors">
-              <input type="checkbox" checked={form.ownerConfirm} onChange={(e) => setForm((p) => ({ ...p, ownerConfirm: e.target.checked }))}
-                className="w-4 h-4 accent-gray-900 mt-0.5 shrink-0" />
-              <span className="text-sm text-gray-700">I am the owner of this account. <span className="text-red-500">*</span></span>
-            </label>
-            <label className="flex items-start gap-3 border border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors">
-              <input type="checkbox" checked={form.feeConfirm} onChange={(e) => setForm((p) => ({ ...p, feeConfirm: e.target.checked }))}
-                className="w-4 h-4 accent-gray-900 mt-0.5 shrink-0" />
-              <span className="text-sm text-gray-700">I agree with the 4% proxy fee that will be taken if the site finds a buyer. <span className="text-red-500">*</span></span>
-            </label>
-          </div>
-
-          {error && (
-            <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
-          )}
-
-          <button type="submit" disabled={loading}
-            className="w-full bg-gray-900 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm py-3.5 rounded-xl transition-colors tracking-wide uppercase">
-            {loading ? "Submitting..." : "Submit Listing"}
-          </button>
-        </form>
-      </div>
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: "100%",
+            background: "var(--foreground)",
+            color: "var(--background)",
+            border: "none",
+            borderRadius: "1rem",
+            padding: "1rem",
+            fontSize: ".9rem",
+            fontWeight: 800,
+            letterSpacing: ".1em",
+            textTransform: "uppercase",
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.5 : 1,
+            transition: "opacity .2s",
+          }}
+        >
+          {loading ? "Submitting..." : "Submit Listing"}
+        </button>
+      </form>
     </div>
   );
 }
