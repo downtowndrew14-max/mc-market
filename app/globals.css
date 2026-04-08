@@ -381,19 +381,12 @@ html { scrollbar-width: thin; scrollbar-color: var(--foreground-subtle) transpar
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Idle float on browse cards */
+/* Browse card skin image */
 .card-skin-img {
   height: 90%;
   object-fit: contain;
   display: block;
-  animation: skin-float 3.5s ease-in-out infinite;
-  will-change: transform;
   filter: drop-shadow(0 16px 24px #00000018);
-}
-@keyframes skin-float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  30%       { transform: translateY(-10px) rotate(.5deg); }
-  70%       { transform: translateY(-6px) rotate(-.4deg); }
 }
 
 /* Filter sidebar */
