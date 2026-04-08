@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { postApprovedListing } from "@/lib/discord";
 
 function isAuthorized(req: NextRequest): boolean {
   const secret = process.env.ADMIN_SECRET;
@@ -56,6 +57,11 @@ export async function PATCH(req: NextRequest) {
     where: { id },
     data: { status },
   });
+
+  // If approving via admin panel, post to the Discord listing channel
+  if (status === "approved") {
+    postApprovedListing(account).catch(console.error);
+  }
 
   return NextResponse.json(account);
 }

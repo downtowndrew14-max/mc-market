@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyDiscordSignature } from "@/lib/discord";
+import { verifyDiscordSignature, postApprovedListing } from "@/lib/discord";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // Read raw body text FIRST — required for signature verification
@@ -52,10 +52,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     if (action === "approve") {
       try {
-        await prisma.account.update({
+        const account = await prisma.account.update({
           where: { id: accountId },
           data: { status: "approved" },
         });
+        // Post to the listing channel
+        postApprovedListing(account).catch(console.error);
       } catch (err) {
         console.error("[Discord Interactions] Failed to approve account:", err);
       }
