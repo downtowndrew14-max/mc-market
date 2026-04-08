@@ -55,13 +55,15 @@ export default function Home() {
     fetch("/api/accounts")
       .then((r) => r.json())
       .then((accounts: { type: string }[]) => {
+        console.log("Fetched accounts:", accounts);
         setCounts({
           total:   accounts.length,
           og:      accounts.filter((a) => a.type === "OG").length,
           minecon: accounts.filter((a) => a.type === "Minecon").length,
           letter3: accounts.filter((a) => a.type === "3 Letter").length,
         });
-      });
+      })
+      .catch((err) => console.error("Failed to fetch accounts:", err));
   }, []);
 
   return (
