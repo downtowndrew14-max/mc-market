@@ -20,5 +20,6 @@ model Account {
   discord      String   @default("")
   oguser       String   @default("")
   telegram     String   @default("")
+  status       String   @default("approved") // "pending" | "approved" | "rejected"
   createdAt    DateTime @default(now())
 }

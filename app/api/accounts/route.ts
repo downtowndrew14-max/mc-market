@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendListingNotification } from "@/lib/discord";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -16,6 +17,7 @@ export async function GET(req: NextRequest) {
 
   const accounts = await prisma.account.findMany({
     where: {
+      status: "approved", // Public browse only shows approved listings
       ...(search ? { username: { contains: search, mode: "insensitive" } } : {}),
       ...(types.length > 0 ? { type: { in: types } } : {}),
       ...(minPrice || maxPrice
@@ -62,8 +64,16 @@ export async function POST(req: NextRequest) {
       discord: body.discord ?? "",
       oguser: body.oguser ?? "",
       telegram: body.telegram ?? "",
+      status: "pending", // New submissions start as pending until reviewed
     },
   });
+
+  // Send Discord notification — non-blocking, errors don't break submission
+  try {
+    await sendListingNotification(account);
+  } catch (err) {
+    console.error("[Accounts API] Discord notification failed:", err);
+  }
 
   return NextResponse.json(account, { status: 201 });
 }
