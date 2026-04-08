@@ -11,27 +11,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Read raw body text FIRST — required for signature verification
   const rawBody = await req.text();
 
-  // Quick-parse to detect PING (type 1) — respond immediately without sig check
-  // Discord sends PING to verify the URL is reachable
-  let earlyParse: { type?: number } = {};
-  try { earlyParse = JSON.parse(rawBody); } catch { /* ignore */ }
-  if (earlyParse.type === 1) {
-    return NextResponse.json({ type: 1 });
-  }
-
-  // For all other interaction types, enforce full signature verification
   const signature = req.headers.get("x-signature-ed25519") ?? "";
   const timestamp = req.headers.get("x-signature-timestamp") ?? "";
   const publicKey = process.env.DISCORD_PUBLIC_KEY ?? "";
 
-  if (publicKey) {
-    const isValid = verifyDiscordSignature(publicKey, signature, timestamp, rawBody);
-    if (!isValid) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-    }
+  if (!publicKey) {
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
   }
 
-  // Parse body
+  const isValid = verifyDiscordSignature(publicKey, signature, timestamp, rawBody);
+  if (!isValid) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
+  // Parse verified body
   let interaction: DiscordInteraction;
   try {
     interaction = JSON.parse(rawBody) as DiscordInteraction;

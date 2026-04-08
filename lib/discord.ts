@@ -128,11 +128,10 @@ export function verifyDiscordSignature(
   body: string
 ): boolean {
   try {
-    const encoder = new TextEncoder();
     return nacl.sign.detached.verify(
-      encoder.encode(timestamp + body),
-      hexToUint8Array(signature),
-      hexToUint8Array(publicKey)
+      Buffer.from(timestamp + body),
+      Buffer.from(signature, "hex"),
+      Buffer.from(publicKey, "hex")
     );
   } catch (err) {
     console.error("[Discord] Signature verification error:", err);
