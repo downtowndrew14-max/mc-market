@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Account, getCapeList } from "@/lib/db";
-import SkinViewer from "./SkinViewer";
 
 function ncLabel(n: number) {
   if (n === 0) return "PRENAME";
@@ -36,9 +35,14 @@ export default function AccountCard({ account }: { account: Account }) {
 
   return (
     <Link href={`/account/${account.id}`} className="account-card">
-      {/* 3D Model */}
+      {/* Character render */}
       <div className="card-image-container">
-        <SkinViewer username={account.username} width={220} height={280} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://mc-heads.net/body/${account.username}/200`}
+          alt={account.username}
+          className="card-skin-img"
+        />
         {capes.length > 0 && (
           <div className="card-capes-overlay">
             {capes.slice(0, 4).map((c) => <CapeIcon key={c} name={c} />)}
