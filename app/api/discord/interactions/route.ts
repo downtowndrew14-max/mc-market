@@ -56,8 +56,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           where: { id: accountId },
           data: { status: "approved" },
         });
-        // Post to the listing channel
-        postApprovedListing(account).catch(console.error);
+        // Post to the listing channel (awaited so it completes before response)
+        await postApprovedListing(account);
       } catch (err) {
         console.error("[Discord Interactions] Failed to approve account:", err);
       }

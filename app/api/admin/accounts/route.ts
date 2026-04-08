@@ -60,7 +60,7 @@ export async function PATCH(req: NextRequest) {
 
   // If approving via admin panel, post to the Discord listing channel
   if (status === "approved") {
-    postApprovedListing(account).catch(console.error);
+    await postApprovedListing(account);
   }
 
   return NextResponse.json(account);
