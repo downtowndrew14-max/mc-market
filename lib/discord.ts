@@ -1,5 +1,6 @@
 // lib/discord.ts
 // Discord bot helper: send listing notifications and verify interaction signatures
+import nacl from "tweetnacl";
 
 export type AccountForDiscord = {
   id: string;
@@ -127,8 +128,6 @@ export function verifyDiscordSignature(
   body: string
 ): boolean {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const nacl = require("tweetnacl") as typeof import("tweetnacl");
     const encoder = new TextEncoder();
     return nacl.sign.detached.verify(
       encoder.encode(timestamp + body),
