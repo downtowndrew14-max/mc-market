@@ -19,7 +19,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   // Verify Discord's Ed25519 signature
-  const isValid = await verifyDiscordSignature(publicKey, signature, timestamp, rawBody);
+  const isValid = verifyDiscordSignature(publicKey, signature, timestamp, rawBody);
   if (!isValid) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }

@@ -117,33 +117,24 @@ export async function sendListingNotification(account: AccountForDiscord): Promi
 }
 
 /**
- * Verifies a Discord interaction signature using Ed25519 via Web Crypto API.
- * Returns true if the signature is valid.
+ * Verifies a Discord interaction signature using tweetnacl (Ed25519).
+ * More reliable than Web Crypto across all serverless environments.
  */
-export async function verifyDiscordSignature(
+export function verifyDiscordSignature(
   publicKey: string,
   signature: string,
   timestamp: string,
   body: string
-): Promise<boolean> {
+): boolean {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const nacl = require("tweetnacl") as typeof import("tweetnacl");
     const encoder = new TextEncoder();
-
-    // Import the public key — cast to ArrayBuffer to satisfy TS strict buffer types
-    const keyData = hexToUint8Array(publicKey).buffer as ArrayBuffer;
-    const cryptoKey = await crypto.subtle.importKey(
-      "raw",
-      keyData,
-      { name: "Ed25519" },
-      false,
-      ["verify"]
+    return nacl.sign.detached.verify(
+      encoder.encode(timestamp + body),
+      hexToUint8Array(signature),
+      hexToUint8Array(publicKey)
     );
-
-    // Verify: the message is timestamp + body (as bytes)
-    const message = encoder.encode(timestamp + body);
-    const signatureBytes = hexToUint8Array(signature).buffer as ArrayBuffer;
-
-    return await crypto.subtle.verify("Ed25519", cryptoKey, signatureBytes, message);
   } catch (err) {
     console.error("[Discord] Signature verification error:", err);
     return false;
