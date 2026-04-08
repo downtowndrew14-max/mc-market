@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { Account, getCapeList } from "@/lib/db";
+import SkinViewer from "./SkinViewer";
 
 function ncLabel(n: number) {
   if (n === 0) return "PRENAME";
@@ -10,7 +10,6 @@ function ncLabel(n: number) {
   return `${n} NAME CHANGE${n !== 1 ? "S" : ""}`;
 }
 
-// Map cape names to short abbreviations for the pixel icons
 function CapeIcon({ name }: { name: string }) {
   const abbr = name.replace(/[^A-Z0-9]/gi, "").slice(0, 2).toUpperCase();
   const colors: Record<string, string> = {
@@ -25,7 +24,6 @@ function CapeIcon({ name }: { name: string }) {
     "Realms Mapmaker": "#0369a1", "Minecraft Experience": "#16a34a",
   };
   const bg = colors[name] ?? "#6b7280";
-
   return (
     <div className="cape-icon" style={{ background: bg, width: 32, height: 32 }} title={name}>
       <span style={{ color: "#fff", fontSize: "9px", fontWeight: 900, fontFamily: "monospace" }}>{abbr}</span>
@@ -34,21 +32,13 @@ function CapeIcon({ name }: { name: string }) {
 }
 
 export default function AccountCard({ account }: { account: Account }) {
-  const [imgLoaded, setImgLoaded] = useState(false);
   const capes = getCapeList(account.capes);
 
   return (
     <Link href={`/account/${account.id}`} className="account-card">
-      {/* Image */}
+      {/* 3D Model */}
       <div className="card-image-container">
-        {!imgLoaded && <div className="card-spinner" />}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`https://mc-heads.net/body/${account.username}/200`}
-          alt={account.username}
-          onLoad={() => setImgLoaded(true)}
-          style={{ height: "100%", objectFit: "contain", display: imgLoaded ? "block" : "none" }}
-        />
+        <SkinViewer username={account.username} width={220} height={280} />
         {capes.length > 0 && (
           <div className="card-capes-overlay">
             {capes.slice(0, 4).map((c) => <CapeIcon key={c} name={c} />)}

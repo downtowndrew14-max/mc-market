@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Account, getCapeList } from "@/lib/db";
+import SkinViewer from "@/components/SkinViewer";
 
 function ncLabel(n: number) {
   if (n === 0) return "Prename (0)";
@@ -47,9 +48,8 @@ export default function AccountPage() {
       <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
         {/* Left */}
         <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", gap: "1rem", width: 280 }}>
-          <div className="glass" style={{ borderRadius: "var(--radius)", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "flex-end", height: 380 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`https://mc-heads.net/body/${account.username}/300`} alt={account.username} style={{ height: "100%", objectFit: "contain" }} />
+          <div className="glass" style={{ borderRadius: "var(--radius)", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center", height: 420 }}>
+            <SkinViewer username={account.username} width={280} height={400} />
           </div>
           {capes.length > 0 && (
             <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
