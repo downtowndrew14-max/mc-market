@@ -8,40 +8,47 @@ async function main() {
       {
         username: "Notch",
         price: 149.99,
-        type: "OG Name",
-        hasCape: true,
-        capeType: "Migrator",
+        currentOffer: 120,
+        type: "OG",
+        capes: "Migrator,Founder's",
         nameChanges: 0,
-        description: "Original username, never changed. Comes with Migrator cape.",
-        discord: "seller#0001",
+        description: "Original username, never changed. Comes with Migrator and Founder's cape. No bans.",
+        discord: "seller",
       },
       {
         username: "xXDarkSlayerXx",
         price: 4.99,
-        type: "Full Access",
-        hasCape: false,
-        capeType: "",
+        currentOffer: 0,
+        type: "Low Tier",
+        capes: "",
         nameChanges: 2,
-        description: "Full access account, 2 name changes used.",
-        discord: "seller#0002",
+        description: "No bans, fresh stats.",
+        discord: "seller2",
       },
       {
         username: "Frost",
         price: 59.99,
-        type: "OG Name",
-        hasCape: true,
-        capeType: "Vanilla",
+        currentOffer: 45,
+        type: "Semi-OG",
+        capes: "Vanilla",
         nameChanges: 0,
-        description: "Short OG name with Vanilla cape. Rare find.",
-        discord: "seller#0003",
+        description: "Short semi-OG name with Vanilla cape. No bans.",
+        discord: "seller3",
+      },
+      {
+        username: "Steve",
+        price: 229.99,
+        currentOffer: 180,
+        type: "OG",
+        capes: "Migrator,MineCon 2012",
+        nameChanges: 0,
+        description: "Iconic OG name. MVP++ for 300d. Multiple rare capes.",
+        discord: "seller4",
       },
     ],
     skipDuplicates: true,
   });
-
-  console.log("Seeded 3 demo accounts.");
+  console.log("Seeded demo accounts.");
 }
 
-main()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect());
+main().catch(console.error).finally(() => prisma.$disconnect());

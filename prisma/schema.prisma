@@ -9,14 +9,16 @@ datasource db {
 }
 
 model Account {
-  id          String   @id @default(cuid())
-  username    String
-  price       Float
-  type        String
-  hasCape     Boolean  @default(false)
-  capeType    String   @default("")
-  nameChanges Int      @default(0)
-  description String   @default("")
-  discord     String
-  createdAt   DateTime @default(now())
+  id           String   @id @default(cuid())
+  username     String
+  price        Float                      // BIN price
+  currentOffer Float    @default(0)       // C/O price (0 = none)
+  type         String
+  capes        String   @default("")      // comma-separated cape names
+  nameChanges  Int      @default(0)       // 0=prename, 15=15+
+  description  String   @default("")
+  discord      String   @default("")
+  oguser       String   @default("")
+  telegram     String   @default("")
+  createdAt    DateTime @default(now())
 }
