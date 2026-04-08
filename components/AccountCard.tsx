@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Account, getCapeList } from "@/lib/db";
+import { Account, getCapeList, getCapeImageUrl } from "@/lib/db";
 
 function ncLabel(n: number) {
   if (n === 0) return "PRENAME";
@@ -10,22 +10,17 @@ function ncLabel(n: number) {
 }
 
 function CapeIcon({ name }: { name: string }) {
-  const abbr = name.replace(/[^A-Z0-9]/gi, "").slice(0, 2).toUpperCase();
-  const colors: Record<string, string> = {
-    "Migrator": "#4f46e5", "Vanilla": "#10b981", "MineCon 2011": "#f59e0b",
-    "MineCon 2012": "#ef4444", "MineCon 2013": "#8b5cf6", "MineCon 2015": "#06b6d4",
-    "MineCon 2016": "#f97316", "Founder's": "#eab308", "Mojang Office": "#dc2626",
-    "Purple Heart": "#7c3aed", "Cherry Blossom": "#ec4899", "Common": "#6b7280",
-    "Copper": "#b45309", "Home": "#2563eb", "Menace": "#991b1b",
-    "Pan": "#d97706", "Translator": "#0891b2", "Yearn": "#7c2d12",
-    "Zombie Horse": "#4d7c0f", "15th Anniversary": "#b45309",
-    "Follower's": "#6366f1", "MCC 15th Year": "#db2777",
-    "Realms Mapmaker": "#0369a1", "Minecraft Experience": "#16a34a",
-  };
-  const bg = colors[name] ?? "#6b7280";
+  const imgUrl = getCapeImageUrl(name);
   return (
-    <div className="cape-icon" style={{ background: bg, width: 32, height: 32 }} title={name}>
-      <span style={{ color: "#fff", fontSize: "9px", fontWeight: 900, fontFamily: "monospace" }}>{abbr}</span>
+    <div className="cape-icon" style={{ width: 28, height: 28, background: "rgba(0,0,0,.08)" }} title={name}>
+      {imgUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={imgUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }} />
+      ) : (
+        <span style={{ color: "#fff", fontSize: "8px", fontWeight: 900, fontFamily: "monospace" }}>
+          {name.replace(/[^A-Z0-9]/gi, "").slice(0, 2).toUpperCase()}
+        </span>
+      )}
     </div>
   );
 }
