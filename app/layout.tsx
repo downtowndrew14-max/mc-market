@@ -5,9 +5,9 @@ import GlassBackground from "@/components/GlassBackground";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
-  title: "Glass Market",
+  title: "Heart Market",
   description: "A website to simplify selling and buying Minecraft accounts",
-  openGraph: { title: "Glass Market", description: "A website to simplify selling and buying Minecraft accounts", type: "website" },
+  openGraph: { title: "Heart Market", description: "A website to simplify selling and buying Minecraft accounts", type: "website" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
