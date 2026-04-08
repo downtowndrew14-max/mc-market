@@ -2,7 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react";
 import AccountCard from "@/components/AccountCard";
+import RevealOnScroll from "@/components/RevealOnScroll";
 import { Account, ACCOUNT_TYPES } from "@/lib/db";
+
+function CardSkeleton() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0, padding: "1rem 0.5rem 1.25rem" }}>
+      <div className="skeleton" style={{ width: 90, height: 180, borderRadius: 12, marginBottom: 8 }} />
+      <div className="skeleton" style={{ width: 24, height: 24, borderRadius: "50%", marginTop: -8, marginBottom: 12 }} />
+      <div className="skeleton" style={{ width: 80, height: 16, borderRadius: 8, marginBottom: 6 }} />
+      <div className="skeleton" style={{ width: 52, height: 14, borderRadius: 999, marginBottom: 8 }} />
+      <div style={{ display: "flex", gap: 10 }}>
+        <div className="skeleton" style={{ width: 36, height: 28, borderRadius: 6 }} />
+        <div className="skeleton" style={{ width: 36, height: 28, borderRadius: 6 }} />
+      </div>
+    </div>
+  );
+}
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Date: Recent" },
@@ -148,11 +164,19 @@ export default function BrowsePage() {
             {loading ? "Loading..." : `${accounts.length} account${accounts.length !== 1 ? "s" : ""} found`}
           </span>
         </div>
-        {!loading && accounts.length === 0 ? (
+        {loading ? (
+          <div className="accounts-grid">
+            {Array.from({ length: 12 }).map((_, i) => <CardSkeleton key={i} />)}
+          </div>
+        ) : accounts.length === 0 ? (
           <div className="grid-empty">No accounts found</div>
         ) : (
           <div className="accounts-grid">
-            {accounts.map((a) => <AccountCard key={a.id} account={a} />)}
+            {accounts.map((a, i) => (
+              <RevealOnScroll key={a.id} delay={Math.min(i * 60, 400)}>
+                <AccountCard account={a} />
+              </RevealOnScroll>
+            ))}
           </div>
         )}
       </div>

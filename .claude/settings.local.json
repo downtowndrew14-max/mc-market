@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m 'Add Heart Market cherry blossom aesthetic theme:*)"
+    ]
+  }
+}

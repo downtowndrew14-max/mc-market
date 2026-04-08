@@ -208,6 +208,82 @@ export async function postApprovedListing(account: AccountForDiscord): Promise<v
 }
 
 /**
+ * Sends an offer notification to the #offers channel.
+ * Called when a buyer submits an offer on a listing.
+ */
+export async function sendOfferNotification(params: {
+  account: AccountForDiscord;
+  offerAmount: number;
+  buyerDiscord: string;
+  buyerTelegram: string;
+  message: string;
+}): Promise<void> {
+  const token = process.env.DISCORD_BOT_TOKEN;
+  const channelId = process.env.DISCORD_OFFERS_CHANNEL_ID;
+
+  if (!token || !channelId) {
+    console.warn("[Discord] DISCORD_OFFERS_CHANNEL_ID not set — skipping offer notification.");
+    return;
+  }
+
+  const { account, offerAmount, buyerDiscord, buyerTelegram, message } = params;
+
+  const buyerParts: string[] = [];
+  if (buyerDiscord)  buyerParts.push(`Discord: \`${buyerDiscord}\``);
+  if (buyerTelegram) buyerParts.push(`Telegram: \`@${buyerTelegram}\``);
+  const buyerStr = buyerParts.join(" • ") || "Not provided";
+
+  const sellerParts: string[] = [];
+  if (account.discord)  sellerParts.push(`Discord: \`${account.discord}\``);
+  if (account.telegram) sellerParts.push(`Telegram: \`@${account.telegram}\``);
+  if (account.oguser)   sellerParts.push(`[OGUsers](${account.oguser})`);
+  const sellerStr = sellerParts.join(" • ") || "Not provided";
+
+  const binLabel = account.price > 0 ? `$${account.price.toFixed(2)}` : "No BIN";
+  const coLabel  = account.currentOffer > 0 ? `$${account.currentOffer.toFixed(2)}` : "No offers yet";
+  const siteUrl  = `https://heartmarket.vercel.app/account/${account.id}`;
+
+  const body = {
+    embeds: [{
+      color: 0x22c55e,
+      title: `💰 New Offer on ${account.username}`,
+      url: siteUrl,
+      thumbnail: { url: `https://mc-heads.net/head/${account.username}/80` },
+      fields: [
+        { name: "Offer Amount", value: `**$${offerAmount.toFixed(2)}**`, inline: true },
+        { name: "BIN Price",    value: binLabel,  inline: true },
+        { name: "C/O Price",    value: coLabel,   inline: true },
+        { name: "From (Buyer)", value: buyerStr,  inline: false },
+        { name: "To (Seller)",  value: sellerStr, inline: false },
+        ...(message ? [{ name: "Message", value: message, inline: false }] : []),
+      ],
+      footer: { text: `Listing ID: ${account.id}` },
+      timestamp: new Date().toISOString(),
+    }],
+    components: [{
+      type: 1,
+      components: [{
+        type: 2,
+        style: 5,
+        label: "View Listing",
+        url: siteUrl,
+      }],
+    }],
+  };
+
+  const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bot ${token}` },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error(`[Discord] Failed to send offer notification: ${res.status} ${text}`);
+  }
+}
+
+/**
  * Verifies a Discord interaction signature using tweetnacl (Ed25519).
  * More reliable than Web Crypto across all serverless environments.
  */
