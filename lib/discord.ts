@@ -1,6 +1,6 @@
 // lib/discord.ts
 // Discord bot helper: send listing notifications and verify interaction signatures
-import nacl from "tweetnacl";
+import * as nacl from "tweetnacl";
 
 export type AccountForDiscord = {
   id: string;

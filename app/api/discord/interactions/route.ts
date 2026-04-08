@@ -1,6 +1,8 @@
 // app/api/discord/interactions/route.ts
 // Handles Discord interaction webhooks (button clicks for Approve / Reject)
 
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyDiscordSignature } from "@/lib/discord";
