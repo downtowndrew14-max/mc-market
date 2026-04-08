@@ -167,7 +167,7 @@ export async function postApprovedListing(account: AccountForDiscord): Promise<v
     embeds: [{
       color: typeColors[account.type] ?? 0xe8497a,
       author: {
-        name: `${account.type} Listing`,
+        name: account.type,
         icon_url: `https://mc-heads.net/head/${account.username}/64`,
       },
       title: account.username,
