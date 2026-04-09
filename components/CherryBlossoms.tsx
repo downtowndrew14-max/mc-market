@@ -79,7 +79,7 @@ export default function CherryBlossoms() {
     window.addEventListener("resize", onResize);
 
     // Seed initial petals spread across the screen
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 60; i++) {
       const p = createPetal(W);
       p.y = Math.random() * H; // start spread out, not all at top
       petals.push(p);
@@ -90,7 +90,7 @@ export default function CherryBlossoms() {
       ctx!.clearRect(0, 0, W, H);
 
       // Spawn new petals gradually
-      if (frame % 18 === 0 && petals.length < 80) {
+      if (frame % 12 === 0 && petals.length < 100) {
         petals.push(createPetal(W));
       }
       frame++;
@@ -127,7 +127,7 @@ export default function CherryBlossoms() {
         inset: 0,
         pointerEvents: "none",
         zIndex: 0,
-        opacity: 0.55,
+        opacity: 0.7,
       }}
     />
   );

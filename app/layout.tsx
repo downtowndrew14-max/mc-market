@@ -10,6 +10,7 @@ import LiveActivityFeed from "@/components/LiveActivityFeed";
 import ParticleEffect from "@/components/ParticleEffect";
 import PageTransition from "@/components/PageTransition";
 import FloatingButtons from "@/components/FloatingButtons";
+import VideoBackground from "@/components/VideoBackground";
 
 export const metadata: Metadata = {
   title: "Heart Market",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <EnterScreen />
         <CustomCursor />
+        <VideoBackground />
         <GlassBackground />
         <CherryBlossoms />
         <ParticleEffect />
