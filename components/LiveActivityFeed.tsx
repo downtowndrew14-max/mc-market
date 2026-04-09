@@ -16,22 +16,27 @@ interface Activity {
 export default function LiveActivityFeed() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isOpen, setIsOpen] = useState(true);
+  const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetch("/api/activity")
-      .then((r) => r.json())
-      .then(setActivities)
-      .catch(console.error);
-
-    const interval = setInterval(() => {
+    const fetchActivities = () => {
       fetch("/api/activity")
         .then((r) => r.json())
-        .then(setActivities)
+        .then((newActivities: Activity[]) => {
+          // Only show activities we haven't seen before
+          const unseenActivities = newActivities.filter(a => !seenIds.has(a.id));
+          if (unseenActivities.length > 0) {
+            setActivities(prev => [...unseenActivities, ...prev].slice(0, 10)); // Keep last 10
+            setSeenIds(prev => new Set([...prev, ...unseenActivities.map(a => a.id)]));
+          }
+        })
         .catch(console.error);
-    }, 10000);
+    };
 
+    fetchActivities();
+    const interval = setInterval(fetchActivities, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [seenIds]);
 
   if (activities.length === 0 || !isOpen) return null;
 
