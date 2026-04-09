@@ -88,6 +88,68 @@ function OfferModal({ account, onClose, onSuccess }: { account: Account; onClose
   );
 }
 
+function EditModal({ account, onClose, onSuccess }: { account: Account; onClose: () => void; onSuccess: (updated: Account) => void }) {
+  const [price, setPrice] = useState(account.price.toString());
+  const [currentOffer, setCurrentOffer] = useState(account.currentOffer.toString());
+  const [state, setState] = useState<"idle"|"loading"|"error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setState("loading");
+    try {
+      const res = await fetch(`/api/accounts/${account.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ price: parseFloat(price), currentOffer: parseFloat(currentOffer) }),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+      const updated = await res.json();
+      onSuccess(updated);
+      onClose();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong");
+      setState("error");
+    }
+  }
+
+  const inp: React.CSSProperties = {
+    width: "100%", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
+    borderRadius: 10, padding: "10px 14px", color: "var(--foreground)", fontSize: "0.9rem",
+    outline: "none", boxSizing: "border-box",
+  };
+  const lbl: React.CSSProperties = {
+    fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" as const,
+    letterSpacing: "0.08em", color: "var(--foreground-subtle)", marginBottom: 6, display: "block",
+  };
+
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 20, padding: "2rem", width: "100%", maxWidth: 440 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 800, margin: 0 }}>Edit Listing</h2>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--foreground-muted)", cursor: "pointer", fontSize: "1.2rem" }}>✕</button>
+        </div>
+        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div>
+            <label style={lbl}>Buy It Now (USD)</label>
+            <input type="number" min="0" step="0.01" placeholder="0.00" value={price} onChange={(e) => setPrice(e.target.value)} style={inp} />
+          </div>
+          <div>
+            <label style={lbl}>Current Offer (USD)</label>
+            <input type="number" min="0" step="0.01" placeholder="0.00" value={currentOffer} onChange={(e) => setCurrentOffer(e.target.value)} style={inp} />
+          </div>
+          {state === "error" && <p style={{ fontSize: "0.8rem", color: "#ef4444", margin: 0 }}>{errorMsg}</p>}
+          <button type="submit" disabled={state === "loading"}
+            style={{ background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, padding: "12px", fontWeight: 800, fontSize: "0.95rem", cursor: "pointer", opacity: state === "loading" ? 0.7 : 1 }}>
+            {state === "loading" ? "Saving..." : "Save Changes"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export default function AccountPage() {
   const { id }          = useParams<{ id: string }>();
   const [account, setAccount] = useState<Account | null>(null);
@@ -146,6 +208,17 @@ export default function AccountPage() {
         />
       )}
 
+      {showEdit && (
+        <EditModal
+          account={account}
+          onClose={() => setShowEdit(false)}
+          onSuccess={(updated) => {
+            setAccount(updated);
+            showToast("Listing updated!", "✅");
+          }}
+        />
+      )}
+
       {/* Back */}
       <Link href="/browse" style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", color: "var(--foreground-muted)", fontSize: ".9rem", fontWeight: 600, marginBottom: "2rem", textDecoration: "none" }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
@@ -189,6 +262,9 @@ export default function AccountPage() {
             </div>
             {/* Action buttons */}
             <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => setShowEdit(true)} title="Edit listing" style={{ background: "var(--glass-bg)", border: "1px solid var(--glass-border)", borderRadius: 12, padding: "8px 14px", cursor: "pointer", fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground-muted)", display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s" }}>
+                ✏️ Edit
+              </button>
               <button onClick={toggleFav} title="Favorite" style={{ background: faved ? "rgba(214,55,113,0.1)" : "var(--glass-bg)", border: `1px solid ${faved ? "rgba(214,55,113,0.4)" : "var(--glass-border)"}`, borderRadius: 12, padding: "8px 14px", cursor: "pointer", fontSize: "1rem", color: faved ? "var(--primary)" : "var(--foreground-muted)", transition: "all 0.2s" }}>
                 {faved ? "🤍" : "🖤"}
               </button>
