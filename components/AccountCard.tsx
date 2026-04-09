@@ -79,14 +79,18 @@ export default function AccountCard({ account }: { account: Account }) {
         </div>
       )}
 
-      {/* Floating character */}
+      {/* Floating character with cape */}
       <div className="float-char-wrap">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`https://mc-heads.net/body/${account.username}/200`}
+          src={`https://starlightskins.lunareclipse.studio/render/ultimate/${account.username}/full`}
           alt={account.username}
           className="float-char"
           draggable={false}
+          onError={(e) => {
+            // Fallback to mc-heads if render fails
+            e.currentTarget.src = `https://mc-heads.net/body/${account.username}/200`;
+          }}
         />
         <div className="float-platform" />
       </div>
