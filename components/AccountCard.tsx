@@ -101,21 +101,25 @@ export default function AccountCard({ account }: { account: Account }) {
           marginTop: 8,
           maxWidth: 140,
         }}>
-          {capeList.slice(0, 3).map((cape) => (
-            <img
-              key={cape}
-              src={getCapeImageUrl(cape)}
-              alt={cape}
-              title={cape}
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: 4,
-                border: "1px solid var(--card-border)",
-                background: "#fff",
-              }}
-            />
-          ))}
+          {capeList.slice(0, 3).map((cape) => {
+            const capeUrl = getCapeImageUrl(cape);
+            if (!capeUrl) return null;
+            return (
+              <img
+                key={cape}
+                src={capeUrl}
+                alt={cape}
+                title={cape}
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 4,
+                  border: "1px solid var(--card-border)",
+                  background: "#fff",
+                }}
+              />
+            );
+          })}
           {capeList.length > 3 && (
             <div style={{
               width: 24,
