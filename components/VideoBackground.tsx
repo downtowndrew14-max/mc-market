@@ -24,13 +24,11 @@ export default function VideoBackground() {
           }}
         />
 
-        {/* Video background */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          onLoadedData={() => setVideoLoaded(true)}
+        {/* GIF background */}
+        <img
+          src="/blossoms.gif"
+          alt="Cherry blossoms background"
+          onLoad={() => setVideoLoaded(true)}
           style={{
             position: "absolute",
             top: "50%",
@@ -44,12 +42,7 @@ export default function VideoBackground() {
             opacity: videoLoaded ? 0.4 : 0,
             transition: "opacity 1s ease",
           }}
-        >
-          <source
-            src="https://cdn.pixabay.com/video/2023/04/20/159049-820264034_large.mp4"
-            type="video/mp4"
-          />
-        </video>
+        />
 
         {/* Overlay for better text readability */}
         <div
