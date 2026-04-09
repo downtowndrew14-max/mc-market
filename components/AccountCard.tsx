@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Account, getCapeList, getCapeImageUrl } from "@/lib/db";
+import { useCurrency } from "@/lib/currency-context";
 
 const TYPE_COLORS: Record<string, string> = {
   "OG":       "#f59e0b",
@@ -19,6 +20,7 @@ export default function AccountCard({ account }: { account: Account }) {
   const color = TYPE_COLORS[account.type] ?? "#d63771";
   const [faved, setFaved] = useState(false);
   const capeList = getCapeList(account.capes);
+  const { convertPrice } = useCurrency();
 
   useEffect(() => {
     try {
@@ -154,14 +156,14 @@ export default function AccountCard({ account }: { account: Account }) {
           <div className="float-price-item">
             <span className="float-price-label">C/O</span>
             <span className="float-price-val">
-              {account.currentOffer > 0 ? `$${account.currentOffer.toFixed(2)}` : "—"}
+              {account.currentOffer > 0 ? convertPrice(account.currentOffer) : "—"}
             </span>
           </div>
           <div className="float-price-divider" />
           <div className="float-price-item">
             <span className="float-price-label">BIN</span>
             <span className="float-price-val">
-              {account.price > 0 ? `$${account.price.toFixed(2)}` : "—"}
+              {account.price > 0 ? convertPrice(account.price) : "—"}
             </span>
           </div>
         </div>
