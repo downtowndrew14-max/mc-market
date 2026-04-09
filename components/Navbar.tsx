@@ -2,13 +2,21 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { useCurrency } from "@/lib/currency-context";
 
-const CURRENCIES = ["USD ($)", "EUR (€)", "CAD (C$)", "GBP (£)"];
+const CURRENCIES = [
+  { code: "USD", label: "USD ($)" },
+  { code: "EUR", label: "EUR (€)" },
+  { code: "CAD", label: "CAD (C$)" },
+  { code: "GBP", label: "GBP (£)" },
+] as const;
 
 export default function Navbar() {
-  const [currency, setCurrency] = useState("USD ($)");
+  const { currency, setCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const currentLabel = CURRENCIES.find(c => c.code === currency)?.label || "USD ($)";
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -35,14 +43,21 @@ export default function Navbar() {
           {/* Currency selector */}
           <div style={{ position: "relative" }} ref={ref}>
             <button className="currency-trigger" onClick={() => setOpen(!open)}>
-              {currency}
+              {currentLabel}
               <span style={{ opacity: .5, fontSize: ".7rem", transition: "transform .3s", transform: open ? "rotate(180deg)" : "none" }}>▼</span>
             </button>
             {open && (
               <div className="currency-dropdown">
                 {CURRENCIES.map((c) => (
-                  <button key={c} className={`currency-item${currency === c ? " active" : ""}`} onClick={() => { setCurrency(c); setOpen(false); }}>
-                    {c}
+                  <button
+                    key={c.code}
+                    className={`currency-item${currency === c.code ? " active" : ""}`}
+                    onClick={() => {
+                      setCurrency(c.code as any);
+                      setOpen(false);
+                    }}
+                  >
+                    {c.label}
                   </button>
                 ))}
               </div>
