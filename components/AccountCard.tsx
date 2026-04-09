@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Account } from "@/lib/db";
+import { Account, getCapeList, getCapeImageUrl } from "@/lib/db";
 
 const TYPE_COLORS: Record<string, string> = {
   "OG":       "#f59e0b",
@@ -18,6 +18,7 @@ function isNew(createdAt: string | Date) {
 export default function AccountCard({ account }: { account: Account }) {
   const color = TYPE_COLORS[account.type] ?? "#d63771";
   const [faved, setFaved] = useState(false);
+  const capeList = getCapeList(account.capes);
 
   useEffect(() => {
     try {
@@ -89,6 +90,51 @@ export default function AccountCard({ account }: { account: Account }) {
         />
         <div className="float-platform" />
       </div>
+
+      {/* Capes */}
+      {capeList.length > 0 && (
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 4,
+          justifyContent: "center",
+          marginTop: 8,
+          maxWidth: 140,
+        }}>
+          {capeList.slice(0, 3).map((cape) => (
+            <img
+              key={cape}
+              src={getCapeImageUrl(cape)}
+              alt={cape}
+              title={cape}
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: 4,
+                border: "1px solid var(--card-border)",
+                background: "#fff",
+              }}
+            />
+          ))}
+          {capeList.length > 3 && (
+            <div style={{
+              width: 24,
+              height: 24,
+              borderRadius: 4,
+              border: "1px solid var(--card-border)",
+              background: "var(--card-bg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "0.65rem",
+              fontWeight: 700,
+              color: "var(--foreground-muted)",
+            }}>
+              +{capeList.length - 3}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Info */}
       <div className="float-info">

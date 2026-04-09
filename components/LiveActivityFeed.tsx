@@ -15,6 +15,7 @@ interface Activity {
 
 export default function LiveActivityFeed() {
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     fetch("/api/activity")
@@ -32,7 +33,7 @@ export default function LiveActivityFeed() {
     return () => clearInterval(interval);
   }, []);
 
-  if (activities.length === 0) return null;
+  if (activities.length === 0 || !isOpen) return null;
 
   return (
     <div style={{
@@ -46,25 +47,42 @@ export default function LiveActivityFeed() {
       borderRadius: "1rem",
       boxShadow: "var(--shadow-lg)",
       overflow: "hidden",
-      zIndex: 100,
+      zIndex: 50,
     }}>
       <div style={{
         padding: "1rem",
         borderBottom: "1px solid var(--card-border)",
         display: "flex",
         alignItems: "center",
-        gap: 8,
+        justifyContent: "space-between",
       }}>
-        <div style={{
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          background: "#22c55e",
-          animation: "pulse 2s ease-in-out infinite",
-        }} />
-        <h3 style={{ margin: 0, fontSize: "0.9rem", fontWeight: 800, color: "var(--foreground)" }}>
-          Live Activity
-        </h3>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: "#22c55e",
+            animation: "blink 1.5s ease-in-out infinite",
+          }} />
+          <h3 style={{ margin: 0, fontSize: "0.9rem", fontWeight: 800, color: "var(--foreground)" }}>
+            Live Activity
+          </h3>
+        </div>
+        <button
+          onClick={() => setIsOpen(false)}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "var(--foreground-muted)",
+            cursor: "pointer",
+            fontSize: "1.2rem",
+            padding: 0,
+            lineHeight: 1,
+          }}
+          title="Close"
+        >
+          ×
+        </button>
       </div>
 
       <div style={{ maxHeight: 340, overflowY: "auto", padding: "0.5rem" }}>
@@ -111,9 +129,9 @@ export default function LiveActivityFeed() {
       </div>
 
       <style>{`
-        @keyframes pulse {
+        @keyframes blink {
           0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          50% { opacity: 0.2; }
         }
       `}</style>
     </div>
