@@ -6,6 +6,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import CherryBlossoms from "@/components/CherryBlossoms";
 import EnterScreen from "@/components/EnterScreen";
 import CustomCursor from "@/components/CustomCursor";
+import LiveActivityFeed from "@/components/LiveActivityFeed";
 
 export const metadata: Metadata = {
   title: "Heart Market",
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main style={{ maxWidth: 1400, margin: "0 auto", padding: "0 2rem", position: "relative", zIndex: 1 }}>
           {children}
         </main>
+        <LiveActivityFeed />
         <ThemeToggle />
       </body>
     </html>

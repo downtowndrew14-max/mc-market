@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Account, getCapeList, getCapeImageUrl } from "@/lib/db";
 import SkinViewer from "@/components/SkinViewer";
+import PriceHistory from "@/components/PriceHistory";
 import { useToast } from "@/components/Toast";
 
 function ncLabel(n: number) {
@@ -266,6 +267,9 @@ export default function AccountPage() {
               )}
             </div>
           </div>
+
+          {/* Price History */}
+          <PriceHistory accountId={account.id} />
         </div>
       </div>
     </div>
