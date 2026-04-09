@@ -10,7 +10,6 @@ import LiveActivityFeed from "@/components/LiveActivityFeed";
 import ParticleEffect from "@/components/ParticleEffect";
 import PageTransition from "@/components/PageTransition";
 import FloatingButtons from "@/components/FloatingButtons";
-import SoundEffects from "@/components/SoundEffects";
 
 export const metadata: Metadata = {
   title: "Heart Market",
@@ -27,7 +26,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GlassBackground />
         <CherryBlossoms />
         <ParticleEffect />
-        <SoundEffects />
         <Navbar />
         <PageTransition>
           <main style={{ maxWidth: 1400, margin: "0 auto", padding: "0 2rem", position: "relative", zIndex: 1 }}>
