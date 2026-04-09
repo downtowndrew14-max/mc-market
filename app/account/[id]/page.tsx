@@ -92,6 +92,7 @@ export default function AccountPage() {
   const { id }          = useParams<{ id: string }>();
   const [account, setAccount] = useState<Account | null>(null);
   const [showOffer, setShowOffer] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [faved, setFaved] = useState(false);
   const { showToast }   = useToast();
 
