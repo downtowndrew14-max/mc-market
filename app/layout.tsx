@@ -7,6 +7,10 @@ import CherryBlossoms from "@/components/CherryBlossoms";
 import EnterScreen from "@/components/EnterScreen";
 import CustomCursor from "@/components/CustomCursor";
 import LiveActivityFeed from "@/components/LiveActivityFeed";
+import ParticleEffect from "@/components/ParticleEffect";
+import PageTransition from "@/components/PageTransition";
+import FloatingButtons from "@/components/FloatingButtons";
+import SoundEffects from "@/components/SoundEffects";
 
 export const metadata: Metadata = {
   title: "Heart Market",
@@ -22,11 +26,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CustomCursor />
         <GlassBackground />
         <CherryBlossoms />
+        <ParticleEffect />
+        <SoundEffects />
         <Navbar />
-        <main style={{ maxWidth: 1400, margin: "0 auto", padding: "0 2rem", position: "relative", zIndex: 1 }}>
-          {children}
-        </main>
+        <PageTransition>
+          <main style={{ maxWidth: 1400, margin: "0 auto", padding: "0 2rem", position: "relative", zIndex: 1 }}>
+            {children}
+          </main>
+        </PageTransition>
         <LiveActivityFeed />
+        <FloatingButtons />
         <ThemeToggle />
       </body>
     </html>

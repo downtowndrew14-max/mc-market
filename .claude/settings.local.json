@@ -12,7 +12,8 @@
       "Bash(npx prisma:*)",
       "Bash(node:*)",
       "Bash(curl -s https://heartmarket.vercel.app/api/accounts)",
-      "Bash(curl -s https://heartmarket.vercel.app/)"
+      "Bash(curl -s https://heartmarket.vercel.app/)",
+      "Bash(curl -s \"https://mc-heads.net/\")"
     ]
   }
 }
