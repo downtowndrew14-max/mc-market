@@ -11,6 +11,7 @@ import ParticleEffect from "@/components/ParticleEffect";
 import PageTransition from "@/components/PageTransition";
 import FloatingButtons from "@/components/FloatingButtons";
 import VideoBackground from "@/components/VideoBackground";
+import ClickTracker from "@/components/ClickTracker";
 import { CurrencyProvider } from "@/lib/currency-context";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <CurrencyProvider>
         <body>
+          <ClickTracker />
           <EnterScreen />
           <CustomCursor />
           <VideoBackground />

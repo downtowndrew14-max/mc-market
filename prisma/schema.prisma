@@ -23,3 +23,9 @@ model Account {
   createdAt    DateTime @default(now())
   status       String   @default("approved")
 }
+
+model Click {
+  id        String   @id @default(cuid())
+  source    String
+  timestamp DateTime @default(now())
+}
