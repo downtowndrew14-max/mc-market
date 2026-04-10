@@ -18,6 +18,16 @@ export default function EnterScreen() {
 
   function handleEnter() {
     sessionStorage.setItem("hm_entered", "1");
+
+    // Track the click
+    fetch('/api/track-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        source: new URLSearchParams(window.location.search).get('source') || 'direct'
+      }),
+    }).catch(() => {}); // Silently fail
+
     // Start music
     setTimeout(() => {
       iframeRef.current?.contentWindow?.postMessage(
